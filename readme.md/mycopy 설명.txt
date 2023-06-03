@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+	char c;
+	FILE *fp1, *fp2;
+
+	if (argc != 3) {
+		fprintf(stderr, "사용법: %s 파일1 파일2\n", argv[0]);
+		return 1;
+	}
+
+	fp1 = fopen(argv[1], "r"); //파일 읽기전용 열기
+	if (fp1 == NULL) {
+		fprintf(stderr, "파일 %s 열기오류\n", argv[1]);
+		return 2;
+	}
+
+	fp2 = fopen(argv[2], "w"); //파일 쓰기전용 열기
+	while ((c = fgetc(fp1)) != EOF) //첫 번째 파일로부터 한 문자씩 읽어서
+		fputc(c, fp2); //두 번째 파일에 쓰기
+
+	fclose(fp1);
+	fclose(fp2);
+	return 0;
+}
