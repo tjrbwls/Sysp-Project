@@ -1,42 +1,66 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
+#include <sys/types.h>
+#include <fcntl.h>
+
+void showHelp(const char* thisName){
+        printf("usage : %s [OPTION] [MESSAGE]\n"
+                        " -h            help\n"
+                        " -w [MESSAGE]  write file\n"
+                    " -r                read file\n"
+                        , thisName);
+}
+
+void writeFile(const char* message){
+        int fd = open("getopt_file.txt",O_RDWR|O_CREAT,0777);
+        write(fd, message, strlen(message));
+        close(fd);
+}
+
+void readFile(){
+        char buf[32]={0,};
+        int n;
+        int fd = open("getopt_file.txt",O_RDWR|O_CREAT,0777);
+        while((n = read(fd, buf, sizeof(buf))) > 0)
+                printf("%s",buf);
+
+        close(fd);
+}
 
 int main(int argc, char *argv[]) {
-	int opt;
-	char *option_value;
+    int opt;
+    char *option_value;
 
-	while ((opt = getopt(argc, argv, "o:a:h:w:r:")) != -1) {
-		switch (opt) {
-			case 'o':
-				option_value = optarg;
-				printf("option 'o' value is : %s\n", option_value);
-				break;
-			case 'a':
-				option_value = optarg;
-				printf("option 'a' value is : %s\n", option_value);
-				break;
-			case 'h':
-				option_value = optarg;
-				printf("option 'h' value is : %s\n", option_value);
-				break;
-			case 'w':
-				option_value = optarg;
-				printf("option 'w' value is : %s\n", option_value);
-				break;
-			case 'r':
-				option_value = optarg;
-				printf("option 'r' value is : %s\n", option_value);
-				break;
-			default:
-				printf("unknown option: %c\n", opt);
-				return 1;
-		}
-	}
+    while ((opt = getopt(argc, argv, "o:a:h:w:r:")) != -1) {
+        switch (opt) {
+            case 'o':
+                option_value = optarg;
+                printf("option 'o' value is : %s\n", option_value);
+                break;
+            case 'a':
+                option_value = optarg;
+                printf("option 'a' value is : %s\n", option_value);
+                break;
+            case 'h':
+                showHelp(argv[0]);
+                break;
+            case 'w':
+                writeFile(optarg);
+                break;
+            case 'r':
+                readFile();
+                break;
+            default:
+                printf("unknown option: %c\n", opt);
+                return 1;
+        }
+    }
 
-	for (int i = optind; i < argc; i++) {
-		printf("argumnt : %s\n", argv[i]);
-	}
+    for (int i = optind; i < argc; i++) {
+        printf("argumnt : %s\n", argv[i]);
+    }
 
-	return 0;
+    return 0;
 }
