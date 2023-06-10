@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[])
+{
+    int i;
+
+    for(i = 1; i<argc; i++){
+        FILE *fp;
+        int c;
+
+        fp = fopen(argv[i], "r"); //읽기전용으로 파일열기
+        if(!fp){
+            perror(argv[i]);
+            exit(1);
+        }
+
+        while((c=fgetc(fp))!=EOF){ //파일로 부터 문자를 읽었을때 파일의 끝이 아니면
+            if(putchar(c) < 0)  //파일이 끝날때까지 파일내용 출력
+		exit(1);
+        }
+        fclose(fp);
+    }
+        exit(0);
+    }
+}
